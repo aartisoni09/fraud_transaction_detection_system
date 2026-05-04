@@ -33,7 +33,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-API = "https://fraudguard-api.onrender.com"
+API = "https://fraud-transaction-detection-system-1-famm.onrender.com"
 
 # ── CSS ────────────────────────────────────────────────────────
 st.markdown("""
