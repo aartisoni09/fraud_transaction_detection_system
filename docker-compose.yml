@@ -1,0 +1,40 @@
+# FraudGuard — Docker Compose
+# Run: docker compose up --build
+
+services:
+  api:
+    build:
+      context: .
+      target: api
+    ports:
+      - "8000:8000"
+    environment:
+      - API_KEY=${API_KEY:-}
+      - ALLOWED_ORIGINS=http://localhost:8501,http://localhost:3000
+      - DATABASE_URL=/app/data/fraudguard.db
+      - LOG_LEVEL=INFO
+    volumes:
+      - fraudguard-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: .
+      target: ui
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  fraudguard-data:

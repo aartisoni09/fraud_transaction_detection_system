@@ -1,3 +1,4 @@
+# FraudGuard — Render Deployment Configuration
 services:
   - type: web
     name: fraudguard-api
@@ -6,7 +7,15 @@ services:
     startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
+      - key: API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        value: /opt/render/project/src/fraudguard.db
+      - key: LOG_LEVEL
+        value: INFO
 
   - type: web
     name: fraudguard-ui
@@ -15,4 +24,9 @@ services:
     startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
+      - key: API_URL
+        fromService:
+          name: fraudguard-api
+          type: web
+          property: host
